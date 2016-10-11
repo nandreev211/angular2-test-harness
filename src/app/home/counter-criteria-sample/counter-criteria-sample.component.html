@@ -1,0 +1,15 @@
+<div class="row">
+  <div class="col-xs-4">
+    <label for="criteriaSample">CountCriteria Sample</label>
+    <select 
+      [ngModel]="counterCriteriaSample"
+      (change)="onSampleChange($event.target.value)"
+      name="criteriaSample" 
+      class="form-control" 
+    >
+      <option value="simple">Simple</option>
+      <option value="all_geo">All Geo</option>
+      <option value="all">All</option>
+    </select>
+  </div>
+</div>

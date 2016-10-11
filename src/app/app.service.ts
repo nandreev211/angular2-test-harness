@@ -6,7 +6,9 @@ export type InternalStateType = {
 
 @Injectable()
 export class AppState {
-  _state: InternalStateType = { };
+  _state: InternalStateType = {
+    itemList: []
+  };
 
   constructor() {
 
@@ -31,6 +33,10 @@ export class AppState {
   set(prop: string, value: any) {
     // internally mutate our state
     return this._state[prop] = value;
+  }
+
+  add(prop:string, value: any) {
+    return this._state[prop].push(value);
   }
 
 

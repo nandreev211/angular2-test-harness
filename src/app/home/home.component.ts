@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
 
 import { AppState } from '../app.service';
+import { CounterCriteria } from './counter-criteria';
+import { ListCriteria } from './list-criteria';
 import { Title } from './title';
-import { XLarge } from './x-large';
 
 @Component({
   // The selector is what angular internally uses
@@ -11,7 +12,9 @@ import { XLarge } from './x-large';
   selector: 'home',  // <home></home>
   // We need to tell Angular's Dependency Injection which providers are in our app.
   providers: [
-    Title
+    Title,
+    CounterCriteria,
+    ListCriteria
   ],
   // Our list of styles in our component. We may add more to compose many styles together
   styleUrls: [ './home.component.css' ],
@@ -20,6 +23,7 @@ import { XLarge } from './x-large';
 })
 export class Home {
   // Set our default values
+  items = [];
   localState = { value: '' };
   // TypeScript public modifiers
   constructor(public appState: AppState, public title: Title) {
@@ -35,5 +39,31 @@ export class Home {
     console.log('submitState', value);
     this.appState.set('value', value);
     this.localState.value = '';
+  }
+
+  onCreateCounter(createdCount) {
+    console.log("=============Created Count");
+    console.log(createdCount);
+    let item = {
+      id: createdCount.data.id,
+      type: "Count",
+      countQty: createdCount.data.attributes.countQty,
+      download: null
+    }
+    this.appState.add('itemList', item);
+    this.items = this.appState.get('itemList');
+  }
+
+  onCreateList(createdList) {
+    console.log("=============Created List");
+    console.log(createdList);
+    let item = {
+      id: createdList.data.id,
+      type: "List",
+      countQty: createdList.data.attributes.listQty,
+      download: createdList.data.attributes.download
+    }
+    this.appState.add('itemList', item);
+    this.items = this.appState.get('itemList');
   }
 }

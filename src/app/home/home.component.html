@@ -1,41 +1,38 @@
-<div class="card-container">
-  <h1 x-large class="sample-content">Your Content Here</h1>
+<div class="main-container">
+  <div class="container">
+    <div class="row">
+      <h1 class="col-xs-12 sample-content">Eprintwerx Public API Test Harness v1</h1>
+    </div>
+    <hr>
 
-  <div>
-    For material design components use the <a href="https://github.com/AngularClass/angular2-webpack-starter/tree/material2"><b>material2</b></a> branch
-  </div>
+    <counter-criteria (createCounter)="onCreateCounter($event)"></counter-criteria>
 
-  <hr>
 
-  <div>
-    For hot module reloading run
-    <pre>npm run start:hmr</pre>
-  </div>
+      <table class="table">
+        <tr>
+          <th width="20%">ID</th>
+          <th width="20%">Type</th>
+          <th width="20%">Qty</th>
+          <th width="40%">List Download</th>
+        </tr>
+        <tr *ngIf="items.length == 0">
+          <td colspan="4">
+            <div class="col-xs-12 text-center">No Data</div>
+          </td>
+        </tr>
+        <tr *ngFor="let item of items">
+          <td>{{item.id}}</td>
+          <td>{{item.type}}</td>
+          <td>{{item.countQty}}</td>
+          <td>
+            <a *ngIf="item.download" href="http:/{{item.download}}" target="_blank">Download File</a>
+            <div *ngIf="!item.download">N/A</div>
+          </td>
+        </tr>
+      </table>
 
-  <hr>
-
-  <div>
-    <h4>Local State</h4>
-
-    <form (ngSubmit)="submitState(localState.value)" autocomplete="off">
-
-      <input
-        [value]="localState.value"
-        (input)="localState.value = $event.target.value"
-        placeholder="Submit Local State to App State"
-        autofocus>
-
-      <button md-raised-button color="primary">Submit Value</button>
-    </form>
-    <!--
-        <input type="text" [value]="localState.value" (input)="localState.value = $event.target.value" autofocus>
-        Rather than wiring up two-way data-binding ourselves with [value] and (input)
-        we can use Angular's [(ngModel)] syntax
-        <input type="text" name="textInput" [(ngModel)]="localState.value" autofocus>
-      -->
-
-    <pre>this.localState = {{ localState | json }}</pre>
-
+    
+    <list-criteria (createList)="onCreateList($event)"></list-criteria>
   </div>
 
 </div>
