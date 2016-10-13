@@ -29,6 +29,7 @@ export class CounterCriteria {
   geoCriteria         = "";
   demoCriteria        = "";
   invalidJSON         = false;
+  didSubmit           = false;
   stopPollingS = new Rx.Subject();
 
   constructor(
@@ -82,7 +83,8 @@ export class CounterCriteria {
   onSubmit() {
     console.log(this.invalidJSON);
 
-    if (!this.invalidJSON) {
+    if (!this.invalidJSON && !this.didSubmit) {
+      this.didSubmit = true;
       this.counterCriteriaService.createCounter(this.counterCriteriaData)
       .subscribe((createdCount: any) => this.pollCount(createdCount.data.id));
     }
@@ -96,6 +98,7 @@ export class CounterCriteria {
 
   checkPollCount(data) {
     if (data.data.attributes.status == "OK") {
+      this.didSubmit = false;
       this.stopPollingS.next(true);
       this.createCounter.next(data)
     }

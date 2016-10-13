@@ -22,12 +22,13 @@ import * as Rx from 'rxjs/Rx';
 })
 export class ListCriteria {
   @Output() createList = new EventEmitter();
-  listCriteriaData = {};
-  datasetCode = ""
-  qtyDesired = ""
-  countId = ""
-  invalidJSON = false;
-  stopPollingS = new Rx.Subject();
+  listCriteriaData   = {};
+  datasetCode        = ""
+  qtyDesired         = ""
+  countId            = ""
+  invalidJSON        = false;
+  didSubmit          = false;
+  stopPollingS       = new Rx.Subject();
 
   constructor(
     public appState: AppState, 
@@ -66,7 +67,8 @@ export class ListCriteria {
 
 
   onSubmit() {
-    if (!this.invalidJSON) {
+    if (!this.invalidJSON && !this.didSubmit) {
+      this.didSubmit = true;
       // this.createCounter.next({ data: this.counterCriteriaData });
       this.listCriteriaService.createList(this.listCriteriaData)
       .subscribe((createdList: any) => this.pollList(createdList.data.id));
@@ -81,6 +83,7 @@ export class ListCriteria {
 
   checkPollList(data) {
     if (data.data.attributes.status == "OK") {
+      this.didSubmit = false;
       this.stopPollingS.next(true);
       this.createList.next(data)
     }
