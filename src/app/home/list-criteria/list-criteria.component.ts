@@ -3,6 +3,7 @@ import { Component, Output, EventEmitter } from '@angular/core';
 import { AppState } from '../../app.service';
 import { ListCriteriaSampleService } from './list-criteria-sample.service';
 import { ListCriteriaService } from './list-criteria.service';
+import * as Rx from 'rxjs/Rx';
 
 @Component({
   // The selector is what angular internally uses
@@ -26,6 +27,8 @@ export class ListCriteria {
   qtyDesired = ""
   countId = ""
   invalidJSON = false;
+  stopPollingS = new Rx.Subject();
+
   constructor(
     public appState: AppState, 
     public listCriteriaSampleService: ListCriteriaSampleService, 
@@ -66,9 +69,21 @@ export class ListCriteria {
     if (!this.invalidJSON) {
       // this.createCounter.next({ data: this.counterCriteriaData });
       this.listCriteriaService.createList(this.listCriteriaData)
-      .subscribe((createdList: any) => this.createList.next(createdList));
+      .subscribe((createdList: any) => this.pollList(createdList.data.id));
     }
     return false;
   } 
+
+  pollList(id) {
+    this.stopPollingS = new Rx.Subject();
+    this.listCriteriaService.pollList(id, this.stopPollingS).subscribe((data: any) => this.checkPollList(data))
+  }
+
+  checkPollList(data) {
+    if (data.data.attributes.status == "OK") {
+      this.stopPollingS.next(true);
+      this.createList.next(data)
+    }
+  }
 
 }

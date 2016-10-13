@@ -17,4 +17,9 @@ export class ListCriteriaService {
     ;
   }
 
+  pollList(id, stopPollingS) {
+    return this.apiService.poll_get(`/lists/queue-jobs/${id}`, stopPollingS)
+    ;
+  }
+
 }

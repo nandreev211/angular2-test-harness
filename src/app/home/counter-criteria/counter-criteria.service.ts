@@ -12,8 +12,13 @@ export class CounterCriteriaService {
   ;
   }
 
-  getCounter(id) {
-    return this.apiService.get(`/counts/queue-jobs/${id}`)
+  getCount(id) {
+    return this.apiService.get(`/counts/${id}`)
+    ;
+  }
+
+  pollCount(id, stopPollingS) {
+    return this.apiService.poll_get(`/counts/queue-jobs/${id}`, stopPollingS)
     ;
   }
 

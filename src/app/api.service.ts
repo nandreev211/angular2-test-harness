@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Headers, Http, Response } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
-import 'rxjs/Rx';
+import * as Rx from 'rxjs/Rx';
 import 'rxjs/add/observable/throw';
 
 @Injectable()
@@ -35,6 +35,18 @@ export class ApiService {
     console.log("======Request GET")
     console.log(`${this.api_url}${path}`);
     return this.http.get(`${this.api_url}${path}`, { headers: this.headers })
+    .map(this.checkForError)
+    .catch(err => Observable.throw(err))
+    .map(this.getJson)
+  }
+
+  poll_get(path: string, stopPollingS): Observable<any> {
+    console.log("======Request GET")
+    console.log(`${this.api_url}${path}`);
+    return Rx.Observable
+    .interval(1000)
+    .switchMap(() => this.http.get(`${this.api_url}${path}`, { headers: this.headers }))
+    .takeUntil(stopPollingS)
     .map(this.checkForError)
     .catch(err => Observable.throw(err))
     .map(this.getJson)

@@ -4,7 +4,7 @@ import { AppState } from '../../app.service';
 import { CounterCriteriaSample } from '../counter-criteria-sample';
 import { CounterCriteriaSampleService } from '../counter-criteria-sample/counter-criteria-sample.service';
 import { CounterCriteriaService } from './counter-criteria.service';
-import 'rxjs/Rx';
+import * as Rx from 'rxjs/Rx';
 
 @Component({
   // The selector is what angular internally uses
@@ -29,6 +29,7 @@ export class CounterCriteria {
   geoCriteria         = "";
   demoCriteria        = "";
   invalidJSON         = false;
+  stopPollingS = new Rx.Subject();
 
   constructor(
     public appState: AppState, 
@@ -83,13 +84,20 @@ export class CounterCriteria {
 
     if (!this.invalidJSON) {
       this.counterCriteriaService.createCounter(this.counterCriteriaData)
-      .subscribe((createdCount: any) => this.getCreatedCount(createdCount.data.id));
+      .subscribe((createdCount: any) => this.pollCount(createdCount.data.id));
     }
     return false;
   } 
 
-  getCreatedCount(id) {
-    let that = this
-    setTimeout(function(){that.counterCriteriaService.getCounter(id).subscribe((data: any) => that.createCounter.next(data))}, 1500);
+  pollCount(id) {
+    this.stopPollingS = new Rx.Subject();
+    this.counterCriteriaService.pollCount(id, this.stopPollingS).subscribe((data: any) => this.checkPollCount(data))
+  }
+
+  checkPollCount(data) {
+    if (data.data.attributes.status == "OK") {
+      this.stopPollingS.next(true);
+      this.createCounter.next(data)
+    }
   }
 }
